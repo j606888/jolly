@@ -8,8 +8,12 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      user_id: {
+      userId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      uuid: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
       name: {
@@ -19,22 +23,22 @@ module.exports = {
       description: {
         type: Sequelize.STRING,
       },
-      expires_at: {
+      expiresAt: {
         type: Sequelize.DATE,
       },
-      collect_email: {
+      collectEmail: {
         type: Sequelize.BOOLEAN,
         defaultValue: true,
       },
-      display_type: {
+      displayType: {
         type: Sequelize.STRING,
         defaultValue: "public",
       },
-      submit_once: {
+      submitOnce: {
         type: Sequelize.BOOLEAN,
         defaultValue: true,
       },
-      allow_edit: {
+      allowEdit: {
         type: Sequelize.BOOLEAN,
         defaultValue: true,
       },

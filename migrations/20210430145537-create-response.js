@@ -1,31 +1,20 @@
 "use strict"
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("Blocks", {
+    await queryInterface.createTable("Responses", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      formId: {
+      userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      title: {
-        type: Sequelize.STRING,
+      formId: {
+        type: Sequelize.INTEGER,
         allowNull: false,
-      },
-      blockType: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      required: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: true,
-      },
-      options: {
-        type: Sequelize.ARRAY(Sequelize.TEXT),
       },
       createdAt: {
         allowNull: false,
@@ -38,6 +27,6 @@ module.exports = {
     })
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("Blocks")
+    await queryInterface.dropTable("Responses")
   },
 }

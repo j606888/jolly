@@ -1,31 +1,33 @@
 "use strict"
 const { Model } = require("sequelize")
+const { v4: uuidv4 } = require("uuid")
 module.exports = (sequelize, DataTypes) => {
   class Form extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
+      this.hasMany(models.Block, { foreignKey: "formId" })
+      this.hasMany(models.Response, { foreignKey: "formId" })
+      this.belongsTo(models.User, { foreignKey: "userId" })
     }
   }
   Form.init(
     {
-      user_id: DataTypes.INTEGER,
+      userId: DataTypes.INTEGER,
       name: DataTypes.STRING,
+      uuid: DataTypes.STRING,
       description: DataTypes.STRING,
-      expires_at: DataTypes.DATE,
-      collect_email: DataTypes.BOOLEAN,
-      display_type: DataTypes.STRING,
-      submit_once: DataTypes.BOOLEAN,
-      allow_edit: DataTypes.BOOLEAN,
+      expiresAt: DataTypes.DATE,
+      collectEmail: DataTypes.BOOLEAN,
+      displayType: DataTypes.STRING,
+      submitOnce: DataTypes.BOOLEAN,
+      allowEdit: DataTypes.BOOLEAN,
     },
     {
       sequelize,
       modelName: "Form",
     }
   )
+  Form.beforeCreate((form, options) => {
+    form.uuid = uuidv4()
+  })
   return Form
 }
