@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "env-cmd -f config/dev.env nodemon --inspect src/index.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +15,20 @@
   "bugs": {
     "url": "https://github.com/j606888/jolly/issues"
   },
-  "homepage": "https://github.com/j606888/jolly#readme"
+  "homepage": "https://github.com/j606888/jolly#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "env-cmd": "^10.1.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^8.6.0",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^6.6.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7",
+    "sequelize-cli": "^6.2.0"
+  }
 }
