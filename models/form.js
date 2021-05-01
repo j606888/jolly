@@ -4,8 +4,16 @@ const { v4: uuidv4 } = require("uuid")
 module.exports = (sequelize, DataTypes) => {
   class Form extends Model {
     static associate(models) {
-      this.hasMany(models.Block, { foreignKey: "formId" })
-      this.hasMany(models.Response, { foreignKey: "formId" })
+      this.hasMany(models.Block, {
+        foreignKey: "formId",
+        onDelete: "CASCADE",
+        hooks: true,
+      })
+      this.hasMany(models.Response, {
+        foreignKey: "formId",
+        onDelete: "CASCADE",
+        hooks: true,
+      })
       this.belongsTo(models.User, { foreignKey: "userId" })
     }
   }
@@ -26,6 +34,22 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "Form",
     }
   )
+  Form.prototype.canSubmit = async function (user) {
+    if (this.expiresAt && this.expiresAt < Date.now()) {
+      return false
+    }
+    if (this.submitOnce) {
+      const submitedForm = await Form.findAndCountAll({
+        where: { userId: user.id, id: this.id },
+      })
+      if (submitedForm > 0) {
+        return false
+      }
+    }
+
+    return true
+  }
+
   Form.beforeCreate((form, options) => {
     form.uuid = uuidv4()
   })

@@ -55,7 +55,7 @@ exports.signin = async (req, res) => {
     user.refreshToken = refreshToken
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_SALT, {
-      expiresIn: "15s",
+      expiresIn: "1h",
     })
 
     await user.save()
@@ -71,7 +71,7 @@ exports.token = async (req, res) => {
     const refreshToken = req.body.refreshToken
     const result = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SALT)
     const token = jwt.sign({ id: result.id }, process.env.JWT_SALT, {
-      expiresIn: "15s",
+      expiresIn: "1h",
     })
     res.send({ token })
   } catch (e) {
