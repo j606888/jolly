@@ -1,11 +1,14 @@
 const express = require("express")
 const bodyParser = require("body-parser")
+const morgan = require("morgan")
 const authRouter = require("./router/auth")
 const userRouter = require("./router/user")
 const FormRouter = require("./router/form")
 const app = express()
 
 app.use(bodyParser.json())
+
+app.use(morgan("dev"))
 
 app.get("/", (req, res) => {
   res.send("<h1>Welcome to Jolly Server</h1>")

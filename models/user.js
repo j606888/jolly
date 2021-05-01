@@ -1,6 +1,8 @@
 "use strict"
 const { Model } = require("sequelize")
-var bcrypt = require("bcryptjs")
+const bcrypt = require("bcryptjs")
+const jwt = require("jsonwebtoken")
+
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
@@ -28,8 +30,30 @@ module.exports = (sequelize, DataTypes) => {
     }
   )
 
-  User.beforeCreate((user) => {
-    user.password = bcrypt.hashSync(user.password, process.env.PASSWORD_SALT)
-  })
+  User.register = async function (name, email, password) {
+    const encryptedPassword = bcrypt.hashSync(
+      password,
+      process.env.PASSWORD_SALT
+    )
+    const user = User.build({ name, email, password: encryptedPassword })
+    await user.save()
+    return user
+  }
+
+  User.prototype.generateRefreshToken = async function () {
+    this.refreshToken = jwt.sign(
+      { id: this.id },
+      process.env.REFRESH_TOKEN_SALT
+    )
+    await this.save()
+  }
+
+  User.prototype.generateToken = function () {
+    const token = jwt.sign({ id: this.id }, process.env.JWT_SALT, {
+      expiresIn: "5m",
+    })
+    return token
+  }
+
   return User
 }
