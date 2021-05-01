@@ -1,3 +1,4 @@
+const { response } = require("express")
 const db = require("../models/index")
 const Form = db.Form
 const Block = db.Block
@@ -15,6 +16,7 @@ exports.create_form = async (req, res) => {
       await block.save()
     }
 
+    await form.reload({ include: Block })
     res.send(form)
   } catch (e) {
     console.log("Error: ", e)
@@ -63,9 +65,9 @@ exports.submit_form = async (req, res) => {
       res.status(404).send("Form not found")
     }
 
-    if (!(await form.canSubmit(req.user))) {
-      res.status(400).send("Can't be submit")
-    }
+    // if (!(await form.canSubmit(req.user))) {
+    //   res.status(400).send("Can't be submit")
+    // }
 
     const response = Response.build({
       userId: req.user.id,
@@ -111,11 +113,27 @@ exports.update_form = async (req, res) => {
     await form.update(req.body)
 
     if (req.body.blocks) {
-      await Block.destroy({ where: { formId: form.id } })
+      // If Block not exist, delete it
+      existBlockIds = req.body.blocks
+        .map((block) => block.id)
+        .filter((el) => el !== undefined)
+      oldBlock = await Block.findAll({ where: { formId: form.id } })
+      oldBlockIds = oldBlock.map((block) => block.id)
+      shouldDeleteIds = oldBlockIds.filter(
+        (oldId) => !existBlockIds.includes(oldId)
+      )
+      await Block.destroy({ where: { id: shouldDeleteIds, formId: form.id } })
 
       for (const block_data of req.body.blocks) {
-        const block = Block.build({ ...block_data, formId: form.id })
-        await block.save()
+        // If Block has id, update it
+        if (block_data.id) {
+          let block = await Block.findOne({ where: { id: block_data.id } })
+          await block.update(block_data)
+        } else {
+          // If Block has no id, create it
+          let block = Block.build({ ...block_data, formId: form.id })
+          await block.save()
+        }
       }
     }
 
@@ -123,6 +141,7 @@ exports.update_form = async (req, res) => {
 
     res.status(200).send(form)
   } catch (e) {
+    console.log("Error: ", e)
     res.status(500).send(e)
   }
 }
@@ -138,6 +157,45 @@ exports.delete_form = async (req, res) => {
     }
     await form.destroy()
     res.status(200).send("Delete success")
+  } catch (e) {
+    console.log(e)
+    res.status(500).send(e)
+  }
+}
+
+exports.get_form_response = async (req, res) => {
+  try {
+    const form = await Form.findOne({
+      where: { uuid: req.params.uuid },
+      include: Block,
+    })
+    if (!form) {
+      res.status(404).send("Form not found")
+    }
+
+    const result = []
+
+    const blockIds = form.Blocks.map((block) => block.id)
+    const titles = form.Blocks.map((block) => block.title)
+    result.push(titles)
+
+    const responses = await Response.findAll({
+      where: { formId: form.id },
+      include: BlockAnswer,
+    })
+
+    responses.forEach((response) => {
+      const answerMap = {}
+      response.BlockAnswers.forEach(
+        (blockAnswer) =>
+          (answerMap[blockAnswer.blockId] = blockAnswer.value.join(","))
+      )
+
+      const answerArray = blockIds.map((blockId) => answerMap[blockId])
+      result.push(answerArray)
+    })
+
+    res.send(result)
   } catch (e) {
     console.log(e)
     res.status(500).send(e)

@@ -10,3 +10,4 @@ module.exports = express
   .put("/forms/:uuid", auth, form_controller.update_form)
   .post("/forms/:uuid/submit", auth, form_controller.submit_form)
   .delete("/forms/:uuid", auth, form_controller.delete_form)
+  .get("/forms/:uuid/response", auth, form_controller.get_form_response)
