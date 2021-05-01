@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "env-cmd -f config/dev.env nodemon --inspect src/index.js"
+    "dev": "env-cmd -f config/dev.env nodemon --inspect src/index.js",
+    "preparing": "env-cmd -f config/preparing.env node src/index.js"
   },
   "repository": {
     "type": "git",
