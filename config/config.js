@@ -14,6 +14,13 @@ module.exports = {
     host: "127.0.0.1",
     dialect: "postgres",
   },
+  preparing: {
+    username: process.env.PG_USERNAME,
+    password: process.env.PG_PASSWORD,
+    database: "jolly_test",
+    host: "127.0.0.1",
+    dialect: "postgres",
+  },
   production: {
     username: process.env.PG_USERNAME,
     password: process.env.PG_PASSWORD,
