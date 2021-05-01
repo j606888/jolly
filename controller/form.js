@@ -1,13 +1,8 @@
-const express = require("express")
-const router = express.Router()
-const auth = require("../../middleware/auth")
-const block = require("../../models/block")
-
-const db = require("../../models/index")
+const db = require("../models/index")
 const Form = db.Form
 const Block = db.Block
 
-router.post("/forms", auth, async (req, res) => {
+exports.create_form = async (req, res) => {
   try {
     form = Form.build({ ...req.body, userId: req.user.id })
 
@@ -23,9 +18,9 @@ router.post("/forms", auth, async (req, res) => {
     console.log("Error: ", e)
     res.status(500).send(e)
   }
-})
+}
 
-router.get("/forms", auth, async (req, res) => {
+exports.get_all_forms = async (req, res) => {
   try {
     const forms = await Form.findAll({
       where: { userId: req.user.id },
@@ -36,9 +31,9 @@ router.get("/forms", auth, async (req, res) => {
     console.log(e)
     res.status(500).send(e)
   }
-})
+}
 
-router.get("/forms/:uuid", auth, async (req, res) => {
+exports.get_one_form = async (req, res) => {
   try {
     const form = await Form.findOne({
       where: { userId: req.user.id, uuid: req.params.uuid },
@@ -53,6 +48,4 @@ router.get("/forms/:uuid", auth, async (req, res) => {
   } catch (e) {
     res.status(500).send(e)
   }
-})
-
-module.exports = router
+}

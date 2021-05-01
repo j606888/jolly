@@ -1,13 +1,10 @@
-const express = require("express")
-const bcrypt = require("bcryptjs")
-const router = express.Router()
-const jwt = require("jsonwebtoken")
 const Joi = require("joi")
-
-const db = require("../../models/index")
+const jwt = require("jsonwebtoken")
+const bcrypt = require("bcryptjs")
+const db = require("../models/index")
 const User = db.User
 
-router.post("/auth/register", async (req, res) => {
+exports.register = async (req, res) => {
   const data = req.body
   const schema = Joi.object().keys({
     name: Joi.string().trim().required(),
@@ -38,9 +35,9 @@ router.post("/auth/register", async (req, res) => {
     console.log(e)
     res.status(500).send(e)
   }
-})
+}
 
-router.post("/auth/signin", async (req, res) => {
+exports.signin = async (req, res) => {
   try {
     const user = await User.findOne({ where: { email: req.body.email } })
     if (!user) {
@@ -67,9 +64,9 @@ router.post("/auth/signin", async (req, res) => {
   } catch (e) {
     res.status(500).send(e)
   }
-})
+}
 
-router.post("/auth/token", async (req, res) => {
+exports.token = async (req, res) => {
   try {
     const refreshToken = req.body.refreshToken
     const result = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SALT)
@@ -80,6 +77,4 @@ router.post("/auth/token", async (req, res) => {
   } catch (e) {
     res.status(500).send(e)
   }
-})
-
-module.exports = router
+}
