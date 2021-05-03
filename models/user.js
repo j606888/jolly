@@ -37,6 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     )
     const user = User.build({ name, email, password: encryptedPassword })
     await user.save()
+    await user.generateRefreshToken()
     return user
   }
 

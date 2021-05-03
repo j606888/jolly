@@ -1,9 +1,5 @@
 const { response } = require("express")
-const db = require("../models/index")
-const Form = db.Form
-const Block = db.Block
-const Response = db.Response
-const BlockAnswer = db.BlockAnswer
+const { Form, Block, Repsonse, BlockAnswer } = require("../models/index")
 
 exports.create_form = async (req, res) => {
   try {

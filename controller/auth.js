@@ -1,33 +1,16 @@
-const Joi = require("joi")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs")
-const db = require("../models/index")
-const User = db.User
+const { User } = require("../models/index")
 
 exports.register = async (req, res) => {
-  const data = req.body
-  const schema = Joi.object().keys({
-    name: Joi.string().trim().required(),
-    email: Joi.string().trim().email().required(),
-    password: Joi.string().trim().required(),
-  })
-
-  const { error, value } = schema.validate(data)
-
-  if (error) {
-    console.log("ERROR: ", error)
-    return res.status(422).send(error)
-  }
-
   try {
-    const { name, email, password } = value
+    const { name, email, password } = req.body
     const existUser = await User.findOne({ where: { email } })
     if (existUser) {
       return res.status(400).send("Email was taken")
     }
 
     const user = await User.register(name, email, password)
-    await user.generateRefreshToken()
     const token = user.generateToken()
 
     res.send({ user, token })
