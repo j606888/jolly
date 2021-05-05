@@ -34,6 +34,13 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "Form",
     }
   )
+  Form.prototype.info = function () {
+    const expiresAt = new Date(this.expiresAt).getTime()
+    const createdAt = new Date(this.createdAt).getTime()
+    const updatedAt = new Date(this.updatedAt).getTime()
+
+    return { ...this.toJSON(), expiresAt, createdAt, updatedAt }
+  }
   Form.prototype.canSubmit = async function (user) {
     if (this.expiresAt && this.expiresAt < Date.now()) {
       return false

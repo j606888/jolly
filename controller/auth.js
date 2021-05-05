@@ -1,3 +1,4 @@
+const { TokenExpiredError, JsonWebTokenError } = require("jsonwebtoken")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs")
 const { User } = require("../models/index")
@@ -7,13 +8,11 @@ exports.register = async (req, res) => {
     const { name, email, password } = req.body
     const existUser = await User.findOne({ where: { email } })
     if (existUser) {
-      return res.status(400).send("Email was taken")
+      return res.status(409).send({ error: "Email was taken" })
     }
 
     const user = await User.register(name, email, password)
-    const token = user.generateToken()
-
-    res.send({ user, token })
+    res.send(await user.info())
   } catch (e) {
     console.log(e)
     res.status(500).send(e)
@@ -24,27 +23,18 @@ exports.signin = async (req, res) => {
   try {
     const user = await User.findOne({ where: { email: req.body.email } })
     if (!user) {
-      return res.status(404).send("User not found!")
+      return res.status(404).send({ error: "User not found!" })
     }
 
-    if (!bcrypt.compareSync(req.body.password, user.password)) {
-      return res.status(400).send("password invalid")
+    if (!user.validatePassword(req.body.password)) {
+      return res.status(400).send({ error: "password invalid" })
     }
 
-    const refreshToken = jwt.sign(
-      { id: user.id },
-      process.env.REFRESH_TOKEN_SALT
-    )
-    user.refreshToken = refreshToken
+    await user.generateRefreshToken()
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SALT, {
-      expiresIn: "1h",
-    })
-
-    await user.save()
-
-    res.send({ user, token, refreshToken })
+    res.send(await user.info())
   } catch (e) {
+    console.log("Error: ", e)
     res.status(500).send(e)
   }
 }
@@ -58,6 +48,10 @@ exports.token = async (req, res) => {
     })
     res.send({ token })
   } catch (e) {
-    res.status(500).send(e)
+    if (e instanceof JsonWebTokenError) {
+      res.status(400).send({ error: "refreshToken not exist!" })
+    } else {
+      res.status(500).send(e)
+    }
   }
 }

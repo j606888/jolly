@@ -18,9 +18,9 @@ const auth = async (req, res, next) => {
     next()
   } catch (e) {
     if (e instanceof TokenExpiredError) {
-      res.status(403).send("Token Expired")
+      res.status(403).send({ error: "Token Expired" })
     } else if (e instanceof JsonWebTokenError) {
-      res.status(400).send("Auth failed!")
+      res.status(400).send({ error: "Auth failed!" })
     } else {
       res.status(500).send(e)
     }

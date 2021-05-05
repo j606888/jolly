@@ -9,12 +9,28 @@ module.exports = (sequelize, DataTypes) => {
       this.hasMany(models.Response, { foreignKey: "userId" })
       this.hasMany(models.Form, { foreignKey: "userId" })
     }
-    info() {
+    async info() {
+      const token = await this.generateToken()
       return {
         id: this.id,
         name: this.name,
         email: this.email,
+        refreshToken: this.refreshToken,
+        token: token,
       }
+    }
+
+    basicInfo() {
+      const { id, name, email } = this
+      return {
+        id,
+        name,
+        email,
+      }
+    }
+
+    validatePassword(password) {
+      return bcrypt.compareSync(password, this.password)
     }
   }
   User.init(

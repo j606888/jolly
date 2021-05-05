@@ -1,5 +1,5 @@
-const { response } = require("express")
-const { Form, Block, Repsonse, BlockAnswer } = require("../models/index")
+const { s3UploadLink, s3DownloadLink } = require("../middleware/s3")
+const { Form, Block, Response, BlockAnswer } = require("../models/index")
 
 exports.create_form = async (req, res) => {
   try {
@@ -13,7 +13,10 @@ exports.create_form = async (req, res) => {
     }
 
     await form.reload({ include: Block })
-    res.send(form)
+    url = await s3UploadLink(form.uuid)
+
+    // res.send({ ...form.toJSON(), url })
+    res.send({ ...form.info(), url })
   } catch (e) {
     console.log("Error: ", e)
     res.status(500).send(e)
@@ -22,10 +25,12 @@ exports.create_form = async (req, res) => {
 
 exports.get_all_forms = async (req, res) => {
   try {
-    const forms = await Form.findAll({
+    let forms = await Form.findAll({
       where: { userId: req.user.id },
       include: Block,
     })
+
+    forms = forms.map((form) => form.info())
     res.send(forms)
   } catch (e) {
     console.log(e)
@@ -44,7 +49,9 @@ exports.get_one_form = async (req, res) => {
       res.status(404).send("not found")
     }
 
-    res.send(form)
+    const url = await s3DownloadLink(form.uuid)
+
+    res.send({ ...form.toJSON(), url })
   } catch (e) {
     res.status(500).send(e)
   }
