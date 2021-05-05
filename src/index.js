@@ -5,6 +5,7 @@ const authRouter = require("../router/auth")
 const userRouter = require("../router/user")
 const FormRouter = require("../router/form")
 const ResponseRouter = require("../router/response")
+const BroadCastRouter = require("../router/broadcast")
 const app = express()
 
 app.use(bodyParser.json())
@@ -15,7 +16,13 @@ app.get("/", (req, res) => {
   res.send("<h1>Welcome to Jolly Server</h1>")
 })
 
-app.use("/api/v1", [authRouter, userRouter, FormRouter, ResponseRouter])
+app.use("/api/v1", [
+  authRouter,
+  userRouter,
+  FormRouter,
+  ResponseRouter,
+  BroadCastRouter,
+])
 
 app.listen(3000)
 

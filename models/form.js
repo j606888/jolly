@@ -1,5 +1,6 @@
 "use strict"
 const { Model } = require("sequelize")
+
 const { v4: uuidv4 } = require("uuid")
 module.exports = (sequelize, DataTypes) => {
   class Form extends Model {
@@ -34,6 +35,30 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "Form",
     }
   )
+  Form.prototype.copyAll = async function () {
+    const formData = this.toJSON()
+    delete formData.id
+    delete formData.createdAt
+    delete formData.updatedAt
+
+    const form = await Form.create(formData)
+    const blocks = await this.getBlocks()
+
+    for await (const block of blocks) {
+      let blockData = block.toJSON()
+
+      delete blockData.id
+      delete blockData.createdAt
+      delete blockData.updatedAt
+      blockData.formId = form.id
+
+      const { Block } = require("../models/index")
+      await Block.create(blockData)
+    }
+
+    return form
+  }
+
   Form.prototype.info = function () {
     const expiresAt = new Date(this.expiresAt).getTime()
     const createdAt = new Date(this.createdAt).getTime()

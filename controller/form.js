@@ -1,5 +1,6 @@
 const { s3UploadLink, s3DownloadLink } = require("../middleware/s3")
 const { Form, Block, Response, BlockAnswer } = require("../models/index")
+const mattermost = require("../services/mattermost")
 
 exports.create_form = async (req, res) => {
   try {
@@ -203,4 +204,14 @@ exports.get_form_response = async (req, res) => {
     console.log(e)
     res.status(500).send(e)
   }
+}
+
+exports.copy_form = async (req, res) => {
+  const form = await Form.findOne({ where: { uuid: req.params.uuid } })
+  if (!form) {
+    res.status(404).send({ error: "Form not found" })
+  }
+
+  const newForm = await form.copyAll()
+  res.send(newForm)
 }
