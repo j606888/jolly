@@ -10,7 +10,10 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       this.belongsTo(models.User, { foreignKey: "userId" })
       this.belongsTo(models.Form, { foreignKey: "formId" })
-      this.hasMany(models.BlockAnswer, { foreignKey: "responseId" })
+      this.hasMany(models.BlockAnswer, {
+        foreignKey: "responseId",
+        onDelete: "cascade",
+      })
     }
   }
   Response.init(
@@ -23,5 +26,14 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "Response",
     }
   )
+  Response.prototype.formInfo = function () {
+    return {
+      id: this.id,
+      formUuid: this.Form.uuid,
+      formName: this.Form.name,
+      formExpiresAt: new Date(this.Form.expiresAt).getTime(),
+      sponsorName: this.User.name,
+    }
+  }
   return Response
 }

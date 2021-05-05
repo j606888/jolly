@@ -67,7 +67,7 @@ module.exports = (sequelize, DataTypes) => {
 
   User.prototype.generateToken = function () {
     const token = jwt.sign({ id: this.id }, process.env.JWT_SALT, {
-      expiresIn: "1h",
+      expiresIn: "1w",
     })
     return token
   }

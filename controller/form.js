@@ -46,7 +46,7 @@ exports.get_one_form = async (req, res) => {
     })
 
     if (!form) {
-      res.status(404).send("not found")
+      res.status(404).send({ error: "Form not found" })
     }
 
     const url = await s3DownloadLink(form.uuid)
@@ -65,7 +65,7 @@ exports.submit_form = async (req, res) => {
     })
 
     if (!form) {
-      res.status(404).send("Form not found")
+      return res.status(404).send({ error: "Form not found" })
     }
 
     // if (!(await form.canSubmit(req.user))) {
@@ -110,7 +110,7 @@ exports.update_form = async (req, res) => {
     })
 
     if (!form) {
-      res.status(404).send("not found")
+      res.status(404).send({ error: "Form not found" })
     }
 
     await form.update(req.body)
@@ -156,10 +156,10 @@ exports.delete_form = async (req, res) => {
       where: { userId: req.user.id, uuid: req.params.uuid },
     })
     if (!form) {
-      res.status(404).send("Form not found")
+      res.status(404).send({ error: "Form not found" })
     }
     await form.destroy()
-    res.status(200).send("Delete success")
+    res.status(200).send({ message: "Delete success" })
   } catch (e) {
     console.log(e)
     res.status(500).send(e)
@@ -173,7 +173,7 @@ exports.get_form_response = async (req, res) => {
       include: Block,
     })
     if (!form) {
-      res.status(404).send("Form not found")
+      res.status(404).send({ error: "Form not found" })
     }
 
     const result = []

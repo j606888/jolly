@@ -44,7 +44,7 @@ exports.token = async (req, res) => {
     const refreshToken = req.body.refreshToken
     const result = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SALT)
     const token = jwt.sign({ id: result.id }, process.env.JWT_SALT, {
-      expiresIn: "1h",
+      expiresIn: "1w",
     })
     res.send({ token })
   } catch (e) {
