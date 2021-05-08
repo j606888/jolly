@@ -1,5 +1,8 @@
-const validation = (schema, property) => {
+const schemas = require("../middleware/schemas")
+
+const validation = (action, property) => {
   return (req, res, next) => {
+    const schema = schemas[action]
     const { error, value } = schema.validate(req[property])
     if (error) {
       const { details } = error

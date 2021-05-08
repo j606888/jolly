@@ -1,8 +1,7 @@
 const { s3UploadLink, s3DownloadLink } = require("../middleware/s3")
 const { Form, Block, Response, BlockAnswer } = require("../models/index")
-const mattermost = require("../services/mattermost")
 
-exports.create_form = async (req, res) => {
+exports.formCreate = async (req, res) => {
   try {
     form = Form.build({ ...req.body, userId: req.user.id })
 
@@ -24,11 +23,11 @@ exports.create_form = async (req, res) => {
   }
 }
 
-exports.get_all_forms = async (req, res) => {
+exports.getAllForms = async (req, res) => {
   try {
     let forms = await Form.findAll({
       where: { userId: req.user.id },
-      include: Block,
+      include: [Block, Response]
     })
 
     forms = forms.map((form) => form.info())
@@ -39,11 +38,11 @@ exports.get_all_forms = async (req, res) => {
   }
 }
 
-exports.get_one_form = async (req, res) => {
+exports.getOneForm = async (req, res) => {
   try {
     const form = await Form.findOne({
       where: { userId: req.user.id, uuid: req.params.uuid },
-      include: Block,
+      include: [Block, Response]
     })
 
     if (!form) {
@@ -58,7 +57,7 @@ exports.get_one_form = async (req, res) => {
   }
 }
 
-exports.submit_form = async (req, res) => {
+exports.submitForm = async (req, res) => {
   try {
     const form = await Form.findOne({
       where: { uuid: req.params.uuid },
@@ -103,7 +102,7 @@ exports.submit_form = async (req, res) => {
   }
 }
 
-exports.update_form = async (req, res) => {
+exports.formUpdate = async (req, res) => {
   try {
     const form = await Form.findOne({
       where: { userId: req.user.id, uuid: req.params.uuid },
@@ -150,7 +149,7 @@ exports.update_form = async (req, res) => {
   }
 }
 
-exports.delete_form = async (req, res) => {
+exports.deleteForm = async (req, res) => {
   // Bad SQL with hook
   try {
     const form = await Form.findOne({
@@ -167,7 +166,7 @@ exports.delete_form = async (req, res) => {
   }
 }
 
-exports.get_form_response = async (req, res) => {
+exports.getFormResponse = async (req, res) => {
   try {
     const form = await Form.findOne({
       where: { uuid: req.params.uuid },
@@ -206,7 +205,7 @@ exports.get_form_response = async (req, res) => {
   }
 }
 
-exports.copy_form = async (req, res) => {
+exports.copyForm = async (req, res) => {
   const form = await Form.findOne({ where: { uuid: req.params.uuid } })
   if (!form) {
     res.status(404).send({ error: "Form not found" })

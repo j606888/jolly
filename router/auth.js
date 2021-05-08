@@ -1,15 +1,9 @@
 const express = require("express")
-const auth_controller = require("../controller/auth")
-
-const schemas = require("../middleware/schemas")
+const authController = require("../controller/auth")
 const validation = require("../middleware/validation")
 
 module.exports = express
   .Router()
-  .post(
-    "/auth/register",
-    validation(schemas.authRegister, "body"),
-    auth_controller.register
-  )
-  .post("/auth/signin", auth_controller.signin)
-  .post("/auth/token", auth_controller.token)
+  .post("/auth/register", validation("authRegister", "body"), authController.register)
+  .post("/auth/signin", validation("authSignin", "body"), authController.signin)
+  .post("/auth/token", validation("authToken", "body"), authController.token)

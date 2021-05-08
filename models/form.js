@@ -63,6 +63,7 @@ module.exports = (sequelize, DataTypes) => {
     const expiresAt = new Date(this.expiresAt).getTime()
     const createdAt = new Date(this.createdAt).getTime()
     const updatedAt = new Date(this.updatedAt).getTime()
+    // const responseCount = this.Responses.legnth
 
     return { ...this.toJSON(), expiresAt, createdAt, updatedAt }
   }
