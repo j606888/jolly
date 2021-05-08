@@ -37,6 +37,7 @@ module.exports = (sequelize, DataTypes) => {
   )
   Form.prototype.copyAll = async function () {
     const formData = this.toJSON()
+    formData.name = `${formData.name} - copy`
     delete formData.id
     delete formData.createdAt
     delete formData.updatedAt
