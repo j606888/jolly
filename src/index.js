@@ -1,13 +1,14 @@
 const express = require("express")
 const bodyParser = require("body-parser")
 const morgan = require("morgan")
+const cors = require('cors')
 const authRouter = require("../router/auth")
 const userRouter = require("../router/user")
 const FormRouter = require("../router/form")
 const ResponseRouter = require("../router/response")
 const BroadCastRouter = require("../router/broadcast")
 const app = express()
-
+app.use(cors())
 app.use(bodyParser.json())
 
 app.use(morgan("dev"))
