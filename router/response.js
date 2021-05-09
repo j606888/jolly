@@ -9,6 +9,6 @@ const { response } = require("express")
 module.exports = express
   .Router()
   .get("/responses", auth, response_controller.list_responses)
-  .get("/responses/:responseId/edit", auth, response_controller.edit_response)
+  .get("/responses/:responseId/edit", validation("editResponse", "params"),auth, response_controller.editResponse)
   .put("/responses/:responseId", auth, response_controller.update_response)
   .delete("/responses/:responseId", auth, response_controller.delete_response)

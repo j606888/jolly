@@ -48,4 +48,7 @@ module.exports = {
       })
     ),
   }),
+  editResponse: Joi.object().keys({
+    responseId: Joi.number().required()
+  }),
 }

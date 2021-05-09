@@ -10,7 +10,7 @@ exports.list_responses = async (req, res) => {
   res.send(responses_info)
 }
 
-exports.edit_response = async (req, res) => {
+exports.editResponse = async (req, res) => {
   const response = await Response.findOne({
     where: { userId: req.user.id, id: req.params.responseId },
     include: Form,
@@ -22,11 +22,8 @@ exports.edit_response = async (req, res) => {
 
   const blocks = await response.Form.getBlocks()
   const blockWithValue = []
-  console.log("=================")
-  console.log("blocks[0]: ", blocks[0])
 
   for await (const block of blocks) {
-    console.log("block: ", block)
     let blockAnswer = await BlockAnswer.findOne({
       where: { blockId: block.id, responseId: response.id },
     })
@@ -49,7 +46,6 @@ exports.update_response = async (req, res) => {
   await BlockAnswer.destroy({ where: { responseId: response.id } })
 
   for await (const blockAnswer of req.body) {
-    console.log("blockAnswer: ", blockAnswer)
     let newBlockAnswer = BlockAnswer.build({
       responseId: response.id,
       blockId: blockAnswer.blockId,
