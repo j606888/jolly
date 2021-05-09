@@ -7,11 +7,8 @@
     "dev": "env-cmd -f config/dev.env nodemon --inspect src/index.js",
     "preparing": "env-cmd -f config/preparing.env node src/index.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/j606888/jolly.git"
-  },
-  "author": "",
+  "repository": "git+https://github.com/j606888/jolly.git",
+  "author": "James <j606888@gmail.com>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/j606888/jolly/issues"
