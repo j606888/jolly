@@ -30,7 +30,7 @@ exports.editResponse = async (req, res) => {
     blockWithValue.push({ ...block.toJSON(), blockAnswer })
   }
 
-  res.send({ ...response.Form.toJSON(), Blocks: blockWithValue })
+  res.send({ ...response.Form.info(), Blocks: blockWithValue })
 }
 
 exports.update_response = async (req, res) => {

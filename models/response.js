@@ -35,5 +35,13 @@ module.exports = (sequelize, DataTypes) => {
       sponsorName: this.User.name,
     }
   }
+
+  Response.prototype.info = function () {
+    const expiresAt = new Date(this.expiresAt).getTime()
+    const createdAt = new Date(this.createdAt).getTime()
+    const updatedAt = new Date(this.updatedAt).getTime()
+
+    return { ...this.toJSON(), expiresAt, createdAt, updatedAt }
+  }
   return Response
 }
