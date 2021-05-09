@@ -30,6 +30,11 @@ app.use("/api/v1", [
   BroadCastRouter,
 ])
 
+app.use((err, req, res, next) => {
+  console.log(err.stack)
+  return res.status(500).json({ error: err.toString() })
+});
+
 app.listen(3000)
 
 console.log("Server is running on port 3000")
