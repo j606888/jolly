@@ -31,10 +31,13 @@ module.exports = {
     ),
   }),
   uuid: Joi.object().keys({
-    uuid: Joi.string().required()
+    uuid: Joi.string().required(),
+  }),
+  responseId: Joi.object().keys({
+    responseId: Joi.string().required(),
   }),
   getOneForm: Joi.object().keys({
-    uuid: Joi.string().required()
+    uuid: Joi.string().required(),
   }),
   formUpdate: Joi.object().keys({
     name: Joi.string().required(),
@@ -54,11 +57,13 @@ module.exports = {
       })
     ),
   }),
-  submitForm: Joi.array().items(Joi.object({
-    blockId: Joi.number(),
-    value: Joi.array().items(Joi.string())
-  })),
+  submitForm: Joi.array().items(
+    Joi.object({
+      blockId: Joi.number(),
+      value: Joi.array().items(Joi.string()),
+    })
+  ),
   editResponse: Joi.object().keys({
-    responseId: Joi.number().required()
+    responseId: Joi.number().required(),
   }),
 }

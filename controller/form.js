@@ -31,14 +31,14 @@ exports.getOneForm = async (req, res, next) => {
     })
 
     if (!form) {
-      res.status(404).send({ error: "Form not found" })
+      return res.status(404).send({ error: "Form not found" })
     }
 
     const url = await s3DownloadLink(form.uuid)
 
-    res.send({ ...form.toJSON(), url })
+    return res.send({ ...form.toJSON(), url })
   } catch (err) {
-    res.status(500).send(e)
+    next(err)
   }
 }
 
