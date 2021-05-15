@@ -27,16 +27,18 @@ exports.getOneForm = async (req, res, next) => {
   try {
     const form = await Form.findOne({
       where: { userId: req.user.id, uuid: req.params.uuid },
-      include: [Block, Response]
+      include: [Response]
     })
 
     if (!form) {
       return res.status(404).send({ error: "Form not found" })
     }
-
+    const blocks = await Block.findAll({ where: {formId: form.id }, order: [['id', 'ASC']]})
+    formObj = form.toJSON()
+    formObj.Blocks = blocks
     const url = await s3DownloadLink(form.uuid)
 
-    return res.send({ ...form.toJSON(), url })
+    return res.send({ ...formObj, url })
   } catch (err) {
     next(err)
   }
